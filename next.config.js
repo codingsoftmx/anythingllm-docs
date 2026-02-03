@@ -3,7 +3,19 @@ const withNextra = require('nextra')({
   themeConfig: './theme.config.tsx',
 })
 
-module.exports = withNextra({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Environment-based configuration
+  output: process.env.NEXT_PUBLIC_OUTPUT_DIR === 'dist' ? 'export' : undefined,
+  distDir: process.env.NEXT_PUBLIC_OUTPUT_DIR || 'dist',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  
+  // Image optimization settings
+  images: {
+    unoptimized: process.env.NEXT_PUBLIC_OUTPUT_DIR === 'dist',
+  },
+  
+  // Webpack configuration for SVG support
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -12,6 +24,8 @@ module.exports = withNextra({
 
     return config;
   },
+  
+  // Redirects configuration
   async redirects() {
     return [
       {
@@ -26,4 +40,6 @@ module.exports = withNextra({
       },
     ];
   },
-});
+}
+
+module.exports = withNextra(nextConfig)
